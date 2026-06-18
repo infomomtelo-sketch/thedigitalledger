@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>The Digital Ledger — AI Money Guide</title>
+<meta name="description" content="Your personal AI advisor for side hustles, passive income, and making money online. Real advice, real opportunities, no scams.">
+<meta property="og:title" content="The Digital Ledger — AI Money Guide">
+<meta property="og:description" content="Ask AI anything about making money online. Get specific, actionable advice tailored to your situation.">
+<meta property="og:url" content="https://thedigitalledger.net">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+--bg:#09100d;--bg2:#0e1812;--bg3:#131f18;--bg4:#192b1f;
+--accent:#4ade80;--accent2:#22c55e;--text:#e8f5ec;--text2:#7aaa88;
+--border:rgba(74,222,128,0.15);--font:'Inter',-apple-system,sans-serif;--radius:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;-webkit-font-smoothing:antialiased;}
+.hidden{display:none!important;}
+a{text-decoration:none;color:inherit;}
+
+nav{position:sticky;top:0;z-index:100;background:rgba(9,16,13,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{display:flex;align-items:center;gap:8px;cursor:pointer;}
+.nav-icon{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#09100d;}
+.nav-name{font-size:16px;font-weight:800;letter-spacing:-0.02em;}
+.nav-right{display:flex;gap:8px;align-items:center;}
+.nav-btn{padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);border:none;transition:all 0.15s;}
+.nav-btn.ghost{background:transparent;color:var(--text2);border:1px solid var(--border);}
+.nav-btn.ghost:hover{border-color:var(--accent);color:var(--accent);}
+.nav-btn.solid{background:var(--accent);color:#09100d;}
+.nav-btn.solid:hover{opacity:0.88;}
+
+.hero{padding:64px 20px 48px;text-align:center;background:radial-gradient(ellipse at 50% 0%,rgba(74,222,128,0.08) 0%,transparent 65%);}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);background:rgba(74,222,128,0.08);border:1px solid var(--border);padding:5px 14px;border-radius:99px;margin-bottom:24px;}
+.hero-title{font-size:clamp(2rem,7vw,3.4rem);font-weight:800;line-height:1.08;letter-spacing:-0.03em;margin-bottom:16px;}
+.hero-title span{color:var(--accent);}
+.hero-sub{font-size:clamp(0.95rem,2.5vw,1.1rem);color:var(--text2);max-width:460px;margin:0 auto 32px;line-height:1.7;}
+.hero-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:40px;}
+.hero-btn{padding:13px 26px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font);border:none;transition:all 0.15s;}
+.hero-btn.primary{background:var(--accent);color:#09100d;}
+.hero-btn.primary:hover{opacity:0.88;}
+.hero-btn.secondary{background:transparent;color:var(--text2);border:1px solid var(--border);}
+.hero-btn.secondary:hover{border-color:var(--accent);color:var(--accent);}
+.hero-stats{display:flex;gap:32px;justify-content:center;flex-wrap:wrap;}
+.hero-stat-num{font-size:22px;font-weight:800;color:var(--accent);}
+.hero-stat-label{font-size:12px;color:var(--text2);margin-top:2px;}
+
+.section{padding:48px 20px;max-width:640px;margin:0 auto;}
+.section-label{font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;}
+.section-title{font-size:clamp(1.5rem,5vw,2rem);font-weight:800;letter-spacing:-0.02em;margin-bottom:12px;}
+.section-sub{font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:28px;}
+
+.features-grid{display:flex;flex-direction:column;gap:12px;}
+.feature-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:20px;display:flex;gap:14px;align-items:flex-start;}
+.feature-icon{width:40px;height:40px;border-radius:10px;background:rgba(74,222,128,0.1);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;font-weight:800;color:var(--accent);}
+.feature-name{font-size:15px;font-weight:700;margin-bottom:4px;}
+.feature-desc{font-size:13px;color:var(--text2);line-height:1.6;}
+
+.opps-grid{display:flex;flex-direction:column;gap:10px;}
+.opp-category{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.opp-cat-header{padding:14px 18px;font-size:13px;font-weight:700;color:var(--accent);letter-spacing:0.05em;text-transform:uppercase;border-bottom:1px solid var(--border);}
+.opp-items{padding:12px;}
+.opp-item{display:flex;align-items:center;justify-content:space-between;padding:10px 8px;border-radius:8px;cursor:pointer;transition:background 0.1s;}
+.opp-item:hover{background:var(--bg4);}
+.opp-name{font-size:14px;font-weight:600;}
+.opp-earn{font-size:12px;color:var(--accent);margin-top:2px;}
+.opp-link{font-size:12px;color:var(--text2);padding:4px 10px;border:1px solid var(--border);border-radius:99px;}
+
+.pricing-grid{display:flex;flex-direction:column;gap:14px;}
+.price-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:22px;}
+.price-card.featured{border-color:var(--accent);position:relative;}
+.price-card.featured::before{content:'MOST POPULAR';position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:var(--accent);color:#09100d;font-size:10px;font-weight:800;letter-spacing:0.1em;padding:3px 12px;border-radius:0 0 8px 8px;}
+.price-name{font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text2);margin-bottom:8px;}
+.price-amount{font-size:30px;font-weight:800;margin-bottom:4px;}
+.price-amount span{font-size:14px;color:var(--text2);font-weight:400;}
+.price-desc{font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.5;}
+.price-feats{display:flex;flex-direction:column;gap:7px;margin-bottom:16px;}
+.price-feat{font-size:13px;color:var(--text2);display:flex;align-items:center;gap:8px;}
+.price-feat::before{content:'✓';color:var(--accent);font-weight:700;flex-shrink:0;}
+.price-btn{width:100%;padding:12px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);border:none;transition:opacity 0.15s;}
+.price-btn.outline{background:transparent;border:1px solid var(--border);color:var(--text2);}
+.price-btn.filled{background:var(--accent);color:#09100d;}
+.price-btn.filled:hover{opacity:0.88;}
+
+#auth-screen{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 65px);padding:24px;}
+.auth-card{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:36px 28px;width:100%;max-width:360px;}
+.auth-err{font-size:13px;color:#f87171;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);border-radius:8px;padding:10px 14px;margin-bottom:14px;display:none;}
+.google-btn{width:100%;padding:13px 18px;display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:#111;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font);margin-bottom:14px;}
+
+#app-screen{background:var(--bg);min-height:100vh;}
+.app-header{background:var(--bg2);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;}
+.user-badge{display:flex;align-items:center;gap:6px;padding:5px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:99px;cursor:pointer;font-size:12.5px;color:var(--text2);}
+.udot{width:7px;height:7px;border-radius:50%;background:var(--accent);}
+.plan-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700;}
+.plan-chip.free{background:rgba(255,255,255,0.06);color:var(--text2);}
+.plan-chip.pro{background:rgba(74,222,128,0.15);color:var(--accent);}
+
+.app-body{max-width:640px;margin:0 auto;padding:20px 20px 80px;}
+.chat-area{display:flex;flex-direction:column;gap:14px;margin-bottom:20px;}
+.chat-msg{padding:14px 16px;border-radius:14px;font-size:14px;line-height:1.7;max-width:92%;}
+.chat-msg.ai{background:var(--bg3);border:1px solid var(--border);color:var(--text2);align-self:flex-start;border-radius:4px 14px 14px 14px;}
+.chat-msg.ai strong{color:var(--text);}
+.chat-msg.user{background:rgba(74,222,128,0.12);color:var(--text);align-self:flex-end;border-radius:14px 4px 14px 14px;}
+.chat-msg.typing{opacity:0.6;}
+.chat-input-area{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:14px;position:sticky;bottom:20px;}
+.chat-suggestions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+.chat-sugg{padding:6px 12px;border-radius:99px;border:1px solid var(--border);font-size:12px;color:var(--text2);cursor:pointer;background:transparent;font-family:var(--font);transition:all 0.15s;white-space:nowrap;}
+.chat-sugg:hover{border-color:var(--accent);color:var(--accent);}
+.chat-input-row{display:flex;gap:10px;align-items:flex-end;}
+.chat-input{flex:1;background:var(--bg4);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:14px;color:var(--text);font-family:var(--font);resize:none;outline:none;min-height:44px;max-height:120px;line-height:1.5;}
+.chat-input:focus{border-color:var(--accent);}
+.chat-send{width:44px;height:44px;border-radius:10px;background:var(--accent);border:none;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#09100d;font-weight:700;}
+.chat-send:disabled{opacity:0.4;cursor:not-allowed;}
+.chat-limit{text-align:center;font-size:12.5px;color:var(--text2);margin-bottom:10px;}
+.chat-limit span{color:var(--accent);font-weight:700;}
+
+.opp-tracker{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:16px;}
+.opp-tracker-title{font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;}
+.opp-tracker-empty{font-size:13px;color:var(--text2);text-align:center;padding:16px 0;opacity:0.6;}
+.saved-opp{padding:10px 12px;background:var(--bg4);border-radius:8px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;}
+.saved-opp-name{font-size:13.5px;font-weight:600;}
+.saved-opp-earn{font-size:12px;color:var(--accent);margin-top:2px;}
+.saved-opp-del{background:none;border:none;color:var(--text2);cursor:pointer;font-size:16px;padding:0 4px;}
+
+.earnings-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:16px;}
+.earnings-total{font-size:32px;font-weight:800;color:var(--accent);margin:8px 0;}
+.earnings-sub{font-size:13px;color:var(--text2);}
+.earnings-input-row{display:flex;gap:8px;margin-top:14px;}
+.earnings-input{flex:1;background:var(--bg4);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:13.5px;color:var(--text);font-family:var(--font);outline:none;}
+.earnings-input:focus{border-color:var(--accent);}
+.earnings-add-btn{padding:8px 16px;background:var(--accent);color:#09100d;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);}
+
+.tabs{display:flex;gap:2px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:3px;margin-bottom:20px;}
+.tab{flex:1;padding:8px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;text-align:center;color:var(--text2);background:transparent;border:none;font-family:var(--font);transition:all 0.15s;}
+.tab.active{background:var(--accent);color:#09100d;}
+
+#paywall-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(6px);}
+#paywall-modal.show{display:flex;}
+.paywall-card{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:32px 24px;width:100%;max-width:340px;text-align:center;}
+.paywall-btn{width:100%;padding:13px;background:var(--accent);color:#09100d;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);margin-bottom:10px;}
+.paywall-close{background:none;border:none;color:var(--text2);font-size:13px;cursor:pointer;font-family:var(--font);}
+
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px;}
+</style>
+</head>
+<body>
+
+<!-- LANDING -->
+<div id="landing-screen">
+<nav>
+  <div class="nav-logo" onclick="showScreen('landing-screen')">
+    <div class="nav-icon">DL</div>
+    <div class="nav-name">The Digital Ledger</div>
+  </div>
+  <div class="nav-right">
+    <button class="nav-btn ghost" onclick="goAuth('signin')">Sign in</button>
+    <button class="nav-btn solid" onclick="goAuth('signup')">Start free</button>
+  </div>
+</nav>
+<div class="hero">
+  <div class="hero-badge">AI Money Guide</div>
+  <h1 class="hero-title">Your AI advisor for<br><span>making money online.</span></h1>
+  <p class="hero-sub">Ask anything about side hustles, passive income, and real opportunities. Get specific, actionable advice — no fluff, no scams.</p>
+  <div class="hero-btns">
+    <button class="hero-btn primary" onclick="goAuth('signup')">Start free — 5 chats/day</button>
+    <button class="hero-btn secondary" onclick="document.getElementById('features-section').scrollIntoView({behavior:'smooth'})">See how it works</button>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="hero-stat-num">5</div><div class="hero-stat-label">Free chats daily</div></div>
+    <div class="hero-stat"><div class="hero-stat-num">∞</div><div class="hero-stat-label">Opportunities tracked</div></div>
+    <div class="hero-stat"><div class="hero-stat-num">$0</div><div class="hero-stat-label">To get started</div></div>
+  </div>
+</div>
+<div class="section" id="features-section">
+  <div class="section-label">Features</div>
+  <div class="section-title">Everything you need to start earning.</div>
+  <div class="section-sub">AI-powered advice meets practical action.</div>
+  <div class="features-grid">
+    <div class="feature-card"><div class="feature-icon">AI</div><div><div class="feature-name">AI Money Advisor</div><div class="feature-desc">Ask anything about making money online. Get specific, actionable recommendations tailored to your situation, skills, and schedule.</div></div></div>
+    <div class="feature-card"><div class="feature-icon">+</div><div><div class="feature-name">Opportunity Tracker</div><div class="feature-desc">Every opportunity mentioned in your chats gets saved automatically. Build your personal list of income opportunities to explore.</div></div></div>
+    <div class="feature-card"><div class="feature-icon">$</div><div><div class="feature-name">Earnings Dashboard</div><div class="feature-desc">Log income from all your sources. Track what's working, see your total, and stay motivated as the number grows.</div></div></div>
+    <div class="feature-card"><div class="feature-icon">0</div><div><div class="feature-name">No Scams, Ever</div><div class="feature-desc">We only surface legitimate opportunities with real earning potential. No pyramid schemes, no "passive income" traps.</div></div></div>
+  </div>
+</div>
+<div class="section">
+  <div class="section-label">Pricing</div>
+  <div class="section-title">Start free. Go unlimited when ready.</div>
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="price-name">Free</div>
+      <div class="price-amount">$0</div>
+      <div class="price-desc">5 AI chats per day. Opportunity tracking. No card required.</div>
+      <div class="price-feats">
+        <div class="price-feat">5 AI chats per day</div>
+        <div class="price-feat">Opportunity tracker</div>
+        <div class="price-feat">Earnings dashboard</div>
+        <div class="price-feat">No credit card</div>
+      </div>
+      <button class="price-btn outline" onclick="goAuth('signup')">Start free</button>
+    </div>
+    <div class="price-card featured">
+      <div class="price-name">Pro</div>
+      <div class="price-amount">$9.99<span>/month</span></div>
+      <div class="price-desc">Unlimited chats, advanced tracking, and priority AI responses.</div>
+      <div class="price-feats">
+        <div class="price-feat">Unlimited AI chats</div>
+        <div class="price-feat">Everything in Free</div>
+        <div class="price-feat">Advanced earnings analytics</div>
+        <div class="price-feat">Priority AI responses</div>
+        <div class="price-feat">Cancel anytime</div>
+      </div>
+      <button class="price-btn filled" onclick="goAuth('signup')">Get Pro — $9.99/mo</button>
+    </div>
+  </div>
+</div>
+<div style="text-align:center;padding:24px 20px 40px;border-top:1px solid var(--border);">
+  <div style="font-size:12px;color:var(--text2);opacity:0.5;margin-bottom:12px;">A RunP8 product</div>
+  <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+    <a href="https://runp8.com" style="font-size:12px;color:var(--text2);opacity:0.6;" target="_blank">RunP8</a>
+    <a href="https://skillupapp.app" style="font-size:12px;color:var(--text2);opacity:0.6;" target="_blank">SkillUp</a>
+    <a href="https://thejudgy.com" style="font-size:12px;color:var(--text2);opacity:0.6;" target="_blank">TheJudgy</a>
+  </div>
+</div>
+</div>
+
+<!-- AUTH -->
+<div id="auth-screen" class="hidden">
+<nav><div class="nav-logo" onclick="showScreen('landing-screen')"><div class="nav-icon">DL</div><div class="nav-name">The Digital Ledger</div></div></nav>
+<div class="auth-card">
+  <div style="font-size:11px;color:var(--accent);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:10px;">The Digital Ledger</div>
+  <div style="font-size:20px;font-weight:800;margin-bottom:6px;" id="auth-title">Create your free account</div>
+  <div style="font-size:13.5px;color:var(--text2);margin-bottom:22px;line-height:1.5;">5 free AI chats per day. No card needed.</div>
+  <div class="auth-err" id="auth-err"></div>
+  <button class="google-btn" onclick="signInGoogle()">
+    <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.14 0 5.95 1.08 8.17 2.84l6.09-6.09C34.46 3.39 29.5 1.5 24 1.5 14.82 1.5 7.07 7.07 3.87 14.94l7.08 5.5C12.6 13.38 17.85 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.5c0-1.64-.15-3.22-.42-4.74H24v9h12.42c-.54 2.9-2.18 5.36-4.64 7.02l7.18 5.58C43.08 37.28 46.1 31.32 46.1 24.5z"/><path fill="#FBBC05" d="M10.95 28.44A14.5 14.5 0 0 1 9.5 24c0-1.55.27-3.05.74-4.44l-7.08-5.5A22.47 22.47 0 0 0 1.5 24c0 3.61.87 7.02 2.4 10.03l7.05-5.59z"/><path fill="#34A853" d="M24 46.5c5.5 0 10.12-1.82 13.5-4.94l-7.18-5.58C28.6 37.7 26.42 38.5 24 38.5c-6.15 0-11.4-3.88-13.05-9.44l-7.05 5.59C7.07 42.43 14.82 46.5 24 46.5z"/></svg>
+    Continue with Google
+  </button>
+  <div style="font-size:12px;color:var(--text2);text-align:center;opacity:0.7;line-height:1.6;">By continuing you agree to our Terms and Privacy Policy.</div>
+  <div style="margin-top:14px;text-align:center;"><span style="font-size:13px;color:var(--text2);cursor:pointer;" onclick="showScreen('landing-screen')">← Back</span></div>
+</div>
+</div>
+
+<!-- APP -->
+<div id="app-screen" class="hidden">
+<div class="app-header">
+  <div><div style="font-size:15px;font-weight:700;">The Digital Ledger</div><div style="font-size:12px;color:var(--text2);margin-top:1px;">AI Money Guide</div></div>
+  <div style="display:flex;gap:8px;align-items:center;">
+    <span class="plan-chip" id="plan-chip">Free</span>
+    <div class="user-badge" onclick="signOut()"><div class="udot"></div><span id="user-display">Account</span></div>
+  </div>
+</div>
+<div class="app-body">
+  <div class="tabs">
+    <button class="tab active" id="tab-chat" onclick="switchTab('chat')">AI Advisor</button>
+    <button class="tab" id="tab-track" onclick="switchTab('track')">Opportunities</button>
+    <button class="tab" id="tab-earn" onclick="switchTab('earn')">Earnings</button>
+  </div>
+
+  <!-- CHAT TAB -->
+  <div id="tab-chat-content">
+    <div class="chat-area" id="chat-messages"></div>
+    <div class="chat-input-area">
+      <div class="chat-limit">Chats today: <span id="chat-count">0</span> / <span id="chat-limit-val">5</span></div>
+      <div class="chat-suggestions" id="chat-suggestions">
+        <button class="chat-sugg" onclick="sendSugg(this)">Best side hustles for weekends?</button>
+        <button class="chat-sugg" onclick="sendSugg(this)">How to make $500/month passively?</button>
+        <button class="chat-sugg" onclick="sendSugg(this)">Best gig apps right now?</button>
+        <button class="chat-sugg" onclick="sendSugg(this)">How do I start freelancing?</button>
+      </div>
+      <div class="chat-input-row">
+        <textarea class="chat-input" id="chat-input" rows="1" placeholder="Ask about making money online..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat();}"></textarea>
+        <button class="chat-send" id="chat-send-btn" onclick="sendChat()">↑</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPPORTUNITIES TAB -->
+  <div id="tab-track-content" class="hidden">
+    <div class="opp-tracker">
+      <div class="opp-tracker-title">
+        <span>Saved Opportunities</span>
+        <button style="font-size:12px;color:var(--text2);background:none;border:none;cursor:pointer;font-family:var(--font);" onclick="clearOpps()">Clear all</button>
+      </div>
+      <div id="saved-opps-list"><div class="opp-tracker-empty">No opportunities saved yet.<br>Chat with the AI to discover and save opportunities.</div></div>
+    </div>
+    <div class="section-label" style="margin-bottom:12px;">Popular Opportunities</div>
+    <div class="opps-grid">
+      <div class="opp-category">
+        <div class="opp-cat-header">Gig Economy</div>
+        <div class="opp-items">
+          <div class="opp-item"><div><div class="opp-name">Uber / Lyft</div><div class="opp-earn">$15-35/hr</div></div><span class="opp-link" onclick="saveOpp('Uber/Lyft','$15-35/hr')">Save +</span></div>
+          <div class="opp-item"><div><div class="opp-name">DoorDash</div><div class="opp-earn">$15-25/hr</div></div><span class="opp-link" onclick="saveOpp('DoorDash','$15-25/hr')">Save +</span></div>
+          <div class="opp-item"><div><div class="opp-name">Instacart</div><div class="opp-earn">$15-25/hr</div></div><span class="opp-link" onclick="saveOpp('Instacart','$15-25/hr')">Save +</span></div>
+          <div class="opp-item"><div><div class="opp-name">TaskRabbit</div><div class="opp-earn">$20-50/hr</div></div><span class="opp-link" onclick="saveOpp('TaskRabbit','$20-50/hr')">Save +</span></div>
+        </div>
+      </div>
+      <div class="opp-category">
+        <div class="opp-cat-header">Freelance & Skills</div>
+        <div class="opp-items">
+          <div class="opp-item"><div><div class="opp-name">Fiverr</div><div class="opp-earn">$500-5K/mo</div></div><span class="opp-link" onclick="saveOpp('Fiverr','$500-5K/mo')">Save +</span></div>
+          <div class="opp-item"><div><div class="opp-name">Upwork</div><div class="opp-earn">$25-100/hr</div></div><span class="opp-link" onclick="saveOpp('Upwork','$25-100/hr')">Save +</span></div>
+          <div class="opp-item"><div><div class="opp-name">Toptal</div><div class="opp-earn">$60-200/hr</div></div><span class="opp-link" onclick="saveOpp('Toptal','$60-200/hr')">Save +</span></div>
+        </div>
+      </div>
+      <div class="opp-category">
+        <div class="opp-cat-header">Digital Products</div>
+        <div class="opp-items">
+          <div class="opp-item"><div><div class="opp-name">Gumroad</div><div class="opp-earn">$100-10K+/mo</div></div><span class="opp-link" onclick="saveOpp('Gumroad','$100-10K+/mo')">Save +</span></div>
+          <div class="opp-item"><div><div class="opp-name">Shopify</div><div class="opp-earn">$1K-100K+/mo</div></div><span class="opp-link" onclick="saveOpp('Shopify','$1K-100K+/mo')">Save +</span></div>
+          <div class="opp-item"><div><div class="opp-name">Etsy</div><div class="opp-earn">$200-5K/mo</div></div><span class="opp-link" onclick="saveOpp('Etsy','$200-5K/mo')">Save +</span></div>
+        </div>
+      </div>
+      <div class="opp-category">
+        <div class="opp-cat-header">Cashback & Rewards</div>
+        <div class="opp-items">
+          <div class="opp-item"><div><div class="opp-name">Rakuten</div><div class="opp-earn">1-40% cashback</div></div><span class="opp-link" onclick="saveOpp('Rakuten','1-40% cashback')">Save +</span></div>
+          <div class="opp-item"><div><div class="opp-name">Ibotta</div><div class="opp-earn">$50-200/mo</div></div><span class="opp-link" onclick="saveOpp('Ibotta','$50-200/mo')">Save +</span></div>
+          <div class="opp-item"><div><div class="opp-name">Fetch</div><div class="opp-earn">$20-50/mo</div></div><span class="opp-link" onclick="saveOpp('Fetch','$20-50/mo')">Save +</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EARNINGS TAB -->
+  <div id="tab-earn-content" class="hidden">
+    <div class="earnings-card">
+      <div style="font-size:13px;color:var(--text2);">Total Earnings Logged</div>
+      <div class="earnings-total" id="earnings-total">$0.00</div>
+      <div class="earnings-sub">Log income from any source to track your progress.</div>
+      <div class="earnings-input-row">
+        <input class="earnings-input" id="earn-source" placeholder="Source (e.g. DoorDash)">
+        <input class="earnings-input" id="earn-amount" placeholder="$0.00" type="number" min="0" step="0.01" style="max-width:100px;">
+        <button class="earnings-add-btn" onclick="addEarning()">+ Add</button>
+      </div>
+    </div>
+    <div id="earnings-list"></div>
+  </div>
+</div>
+</div>
+
+<!-- PAYWALL -->
+<div id="paywall-modal">
+<div class="paywall-card">
+  <div style="font-size:32px;margin-bottom:14px;">💬</div>
+  <div style="font-size:19px;font-weight:800;margin-bottom:8px;">Daily limit reached</div>
+  <div style="font-size:13.5px;color:var(--text2);margin-bottom:20px;line-height:1.6;">You've used your 5 free chats today. Upgrade to Pro for unlimited conversations.</div>
+  <div style="font-size:28px;font-weight:800;margin-bottom:4px;">$9.99<span style="font-size:13px;color:var(--text2);font-weight:400;">/month</span></div>
+  <div style="display:flex;flex-direction:column;gap:7px;margin:16px 0;text-align:left;">
+    <div style="font-size:13px;color:var(--text2);display:flex;align-items:center;gap:8px;"><span style="color:var(--accent);font-weight:700;">✓</span>Unlimited AI chats</div>
+    <div style="font-size:13px;color:var(--text2);display:flex;align-items:center;gap:8px;"><span style="color:var(--accent);font-weight:700;">✓</span>Advanced earnings analytics</div>
+    <div style="font-size:13px;color:var(--text2);display:flex;align-items:center;gap:8px;"><span style="color:var(--accent);font-weight:700;">✓</span>Priority AI responses</div>
+    <div style="font-size:13px;color:var(--text2);display:flex;align-items:center;gap:8px;"><span style="color:var(--accent);font-weight:700;">✓</span>Cancel anytime</div>
+  </div>
+  <button class="paywall-btn" onclick="goUpgrade()">Upgrade to Pro — $9.99/mo</button>
+  <button class="paywall-close" onclick="closePaywall()">Maybe later</button>
+</div>
+</div>
+
+<script>
+const SUPA_URL='https://nwlhsshvqmbhemhxcran.supabase.co';
+const SUPA_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im53bGhzc2h2cW1iaGVtaHhjcmFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5OTEzOTIsImV4cCI6MjA5NTU2NzM5Mn0.2yASMx57IUNjEW8bMs8FwXnIz4cLsE1ftqD35QAOqE8';
+const STRIPE_LINK='#';
+const WORKER_URL='https://digitalledger-ai.infomomtelo.workers.dev/api/chat';
+const {createClient}=supabase;
+const sb=createClient(SUPA_URL,SUPA_ANON,{auth:{autoRefreshToken:true,persistSession:true,detectSessionInUrl:true}});
+
+let currentUser=null, userPlan='free';
+let chatHistory=[];
+let savedOpps=JSON.parse(localStorage.getItem('dl_opps')||'[]');
+let earnings=JSON.parse(localStorage.getItem('dl_earnings')||'[]');
+let chatToday=parseInt(localStorage.getItem('dl_chat_date')===new Date().toDateString()?localStorage.getItem('dl_chats')||'0':'0');
+
+function showScreen(id){
+  ['landing-screen','auth-screen','app-screen'].forEach(s=>{const el=document.getElementById(s);if(el)el.classList.add('hidden');});
+  const t=document.getElementById(id);if(t){t.classList.remove('hidden');window.scrollTo(0,0);}
+}
+function goAuth(mode){
+  document.getElementById('auth-title').textContent=mode==='signup'?'Create your free account':'Welcome back';
+  showScreen('auth-screen');
+}
+async function signInGoogle(){
+  const{error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:'https://thedigitalledger.net'}});
+  if(error){const e=document.getElementById('auth-err');e.textContent=error.message;e.style.display='block';}
+}
+async function signOut(){if(!confirm('Sign out?'))return;await sb.auth.signOut();currentUser=null;showScreen('landing-screen');}
+async function loadUser(){
+  if(!currentUser)return;
+  const{data}=await sb.from('profiles').select('plan').eq('id',currentUser.id).single();
+  if(data)userPlan=data.plan||'free';
+  const name=currentUser.email?.split('@')[0]||'Account';
+  document.getElementById('user-display').textContent=name;
+  const chip=document.getElementById('plan-chip');
+  chip.textContent=userPlan==='pro'?'Pro':'Free';
+  chip.className=userPlan==='pro'?'plan-chip pro':'plan-chip free';
+  updateChatLimit();
+}
+function updateChatLimit(){
+  const limit=userPlan==='pro'?999:5;
+  document.getElementById('chat-count').textContent=chatToday;
+  document.getElementById('chat-limit-val').textContent=userPlan==='pro'?'∞':5;
+}
+function switchTab(tab){
+  ['chat','track','earn'].forEach(t=>{
+    document.getElementById('tab-'+t).classList.toggle('active',t===tab);
+    document.getElementById('tab-'+t+'-content').classList.toggle('hidden',t!==tab);
+  });
+  if(tab==='track')renderOpps();
+  if(tab==='earn')renderEarnings();
+}
+
+// ── CHAT ──
+function addMessage(text,role){
+  const area=document.getElementById('chat-messages');
+  const el=document.createElement('div');
+  el.className=`chat-msg ${role}`;
+  el.innerHTML=text;
+  area.appendChild(el);
+  area.scrollTop=area.scrollHeight;
+  return el;
+}
+function sendSugg(btn){
+  document.getElementById('chat-input').value=btn.textContent;
+  document.getElementById('chat-suggestions').classList.add('hidden');
+  sendChat();
+}
+async function sendChat(){
+  const input=document.getElementById('chat-input');
+  const msg=input.value.trim();
+  if(!msg)return;
+  const limit=userPlan==='pro'?Infinity:5;
+  if(chatToday>=limit){showPaywall();return;}
+  input.value='';
+  addMessage(msg,'user');
+  chatHistory.push({role:'user',content:msg});
+  const thinking=addMessage('<em>Thinking...</em>','ai typing');
+  const btn=document.getElementById('chat-send-btn');
+  btn.disabled=true;
+  chatToday++;
+  localStorage.setItem('dl_chats',chatToday);
+  localStorage.setItem('dl_chat_date',new Date().toDateString());
+  updateChatLimit();
+  try{
+    const res=await fetch(WORKER_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        system:`You are a knowledgeable AI money advisor on The Digital Ledger. Help users discover legitimate ways to make money online — side hustles, gig work, freelancing, passive income, digital products, and more. Be specific and actionable. Give real earning estimates. Never recommend scams, pyramid schemes, or unrealistic claims. When you mention a specific opportunity, format it clearly so users can save it. Keep responses concise and practical.`,
+        messages:chatHistory
+      })
+    });
+    const data=await res.json();
+    const reply=data.content?.[0]?.text||data.reply||'Sorry, I could not get a response right now.';
+    thinking.className='chat-msg ai';
+    thinking.innerHTML=reply.replace(/\n/g,'<br>');
+    chatHistory.push({role:'assistant',content:reply});
+    if(chatHistory.length>20)chatHistory=chatHistory.slice(-20);
+  }catch(e){
+    thinking.className='chat-msg ai';
+    thinking.textContent='Connection error. Please try again.';
+  }
+  btn.disabled=false;
+}
+
+// ── OPPORTUNITIES ──
+function saveOpp(name,earn){
+  if(savedOpps.find(o=>o.name===name))return;
+  savedOpps.push({name,earn,id:Date.now()});
+  localStorage.setItem('dl_opps',JSON.stringify(savedOpps));
+  renderOpps();
+}
+function deleteOpp(id){
+  savedOpps=savedOpps.filter(o=>o.id!==id);
+  localStorage.setItem('dl_opps',JSON.stringify(savedOpps));
+  renderOpps();
+}
+function clearOpps(){
+  if(!confirm('Clear all saved opportunities?'))return;
+  savedOpps=[];localStorage.removeItem('dl_opps');renderOpps();
+}
+function renderOpps(){
+  const list=document.getElementById('saved-opps-list');
+  if(!savedOpps.length){list.innerHTML='<div class="opp-tracker-empty">No opportunities saved yet.<br>Chat with the AI to discover and save opportunities.</div>';return;}
+  list.innerHTML=savedOpps.map(o=>`<div class="saved-opp"><div><div class="saved-opp-name">${o.name}</div><div class="saved-opp-earn">${o.earn}</div></div><button class="saved-opp-del" onclick="deleteOpp(${o.id})">×</button></div>`).join('');
+}
+
+// ── EARNINGS ──
+function addEarning(){
+  const source=document.getElementById('earn-source').value.trim();
+  const amount=parseFloat(document.getElementById('earn-amount').value);
+  if(!source||!amount||amount<=0)return;
+  earnings.push({source,amount,date:new Date().toLocaleDateString(),id:Date.now()});
+  localStorage.setItem('dl_earnings',JSON.stringify(earnings));
+  document.getElementById('earn-source').value='';
+  document.getElementById('earn-amount').value='';
+  renderEarnings();
+}
+function deleteEarning(id){
+  earnings=earnings.filter(e=>e.id!==id);
+  localStorage.setItem('dl_earnings',JSON.stringify(earnings));
+  renderEarnings();
+}
+function renderEarnings(){
+  const total=earnings.reduce((s,e)=>s+e.amount,0);
+  document.getElementById('earnings-total').textContent='$'+total.toFixed(2);
+  const list=document.getElementById('earnings-list');
+  if(!earnings.length){list.innerHTML='<div style="font-size:13px;color:var(--text2);text-align:center;padding:20px;opacity:0.6;">No earnings logged yet. Start tracking your income!</div>';return;}
+  list.innerHTML=earnings.slice().reverse().map(e=>`<div class="saved-opp"><div><div class="saved-opp-name">${e.source}</div><div style="font-size:12px;color:var(--text2);">${e.date}</div></div><div style="display:flex;align-items:center;gap:10px;"><span style="font-size:15px;font-weight:700;color:var(--accent);">$${e.amount.toFixed(2)}</span><button class="saved-opp-del" onclick="deleteEarning(${e.id})">×</button></div></div>`).join('');
+}
+
+function showPaywall(){document.getElementById('paywall-modal').classList.add('show');}
+function closePaywall(){document.getElementById('paywall-modal').classList.remove('show');}
+function goUpgrade(){window.open(STRIPE_LINK,'_blank');closePaywall();}
+
+// ── INIT ──
+function initChat(){
+  addMessage('<strong>Welcome to The Digital Ledger.</strong><br><br>I\'m your AI money advisor. Ask me anything about side hustles, passive income, freelancing, or making money online. I\'ll give you specific, actionable advice — no fluff.','ai');
+}
+async function init(){
+  let{data:{session}}=await sb.auth.getSession();
+  if(!session){const{data:r}=await sb.auth.refreshSession();session=r?.session;}
+  if(session?.user){currentUser=session.user;await loadUser();initChat();showScreen('app-screen');}
+  else{showScreen('landing-screen');}
+  sb.auth.onAuthStateChange(async(event,session)=>{
+    if(event==='SIGNED_IN'&&session){currentUser=session.user;await loadUser();initChat();showScreen('app-screen');}
+    if(event==='SIGNED_OUT'){currentUser=null;showScreen('landing-screen');}
+    if(event==='TOKEN_REFRESHED'&&session){currentUser=session.user;}
+  });
+}
+init();
+</script>
+</body>
+</html>
